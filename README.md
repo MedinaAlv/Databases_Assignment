@@ -104,3 +104,22 @@ These sources helped us identify relevant variables for our database, including 
 The overall goal of our database is to provide a structured way to investigate **whether young people can afford available housing and how housing costs may contribute to their risk of poverty**.
 
 By connecting information about tenants, their financial circumstances, landlords, houses, applications, rental contracts, and locations, the database provides a foundation for analysing the housing affordability challenges faced by young people in Spain and, more broadly, across Europe.
+
+
+## TODO to use database properly
+
+## Set up the Kernel 
+Only do this the first time you oull from github, so your code works
+Run the following command in terminal: 
+    python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt
+Then go to database.ipynb -> Select Kernel -> Python Environments -> venv
+
+## To log into SQL 
+Create a file called ".env" 
+Copy the following into the file: 
+DB_USER=[Your username for SQL]
+DB_PASSWORD=[Your Password for SQL]
+DB_NAME=housing_poverty
+
+Subsitute the first two with your info, leave the last 
+The file is git ignored so it won't be pushed to git. Therefore everyone needs to create their own on their computer to use sql

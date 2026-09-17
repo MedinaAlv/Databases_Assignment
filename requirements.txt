@@ -1,0 +1,6 @@
+jupyter 
+ipykernel 
+ipython-sql 
+pymysql 
+sqlalchemy
+python-dotenv
