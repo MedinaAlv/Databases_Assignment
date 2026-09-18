@@ -20,7 +20,7 @@ Research on Europe also shows that housing affordability problems are particular
 
 ## Our Database
 
-Our database is designed to explore housing affordability for **young adults aged 18–30** and identify whether available housing could be affordable for a potential tenant.
+Our database is designed to explore housing affordability for **young adults aged 18–30** in the Netherlands and identify whether available housing could be affordable for a potential tenant.
 
 The database should be able to answer questions such as:
 
