@@ -11,6 +11,7 @@
 ## Project documentation
 
 - [Week 2: data model and normalization report](Week_2_Report.md)
+- [Week 2: ERD diagram](assets/ERD_Diagram.pdf)
 - [Week 3: schema, constraints, and example queries](database.ipynb)
 - [Week 5: real-data normalization and limitations](Week5_Answer_4-5.md)
 
