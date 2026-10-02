@@ -2,6 +2,16 @@
 
 **Group members:** Lilly Schulze, Juliette Drugmand, Federico Leongito, and Álvaro Medina
 
+**Repository:** [MedinaAlv/Databases_Assignment](https://github.com/MedinaAlv/Databases_Assignment)
+
+## Real-world data sources
+
+The two openly licensed CBS datasets selected for the real-data exercise are available in the [data directory](data/README.md). The housing-cost file contains 156 distinct observations; the expanded financial-position file contains 56 distinct observations. They cover different subjects and dimensions, so neither dataset is a subset of the other. Both contain aggregate statistics, not records of individual tenants or advertised properties.
+
+To load them into a MySQL database configured in `.env`, run `./venv/bin/python import_cbs.py`. Use `./venv/bin/python import_cbs.py --validate-only` to check the CSVs without changing the database. The import creates separate CBS observation tables defined in [`cbs_observations.sql`](cbs_observations.sql), so the existing tenant and house records are not used for these statistics. See the [data notes](data/README.md) for the source selection, cleaning rules, and verification results.
+
+The week 3 example queries were rerun: they returned 24 tenant–house matches, four city summaries, and 18 tenant–city summaries, all from mock records. The [adapted CBS queries](queries_cbs.sql) returned 12 province housing comparisons, 28 age-and-sex financial observations for 2018–2024, and 16 observations for years shared by both datasets. The CBS data contains aggregate statistics, so it cannot identify affordable houses for individual tenants.
+
 ## Societal Problem
 
 The societal problem we are investigating is **Housing Costs and the Risk of Poverty Among Young People**.
