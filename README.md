@@ -8,6 +8,12 @@
 
 [Watch or download the stakeholder video](assets/week4-stakeholder-video.mov).
 
+## Project documentation
+
+- [Week 2: data model and normalization report](Week_2_Report.md)
+- [Week 3: schema, constraints, and example queries](database.ipynb)
+- [Week 5: real-data normalization and limitations](Week5_Answer_4-5.md)
+
 ## Real-world data sources
 
 The two openly licensed CBS datasets selected for the real-data exercise are available in the [data directory](data/README.md). The housing-cost file contains 156 distinct observations; the expanded financial-position file contains 56 distinct observations. They cover different subjects and dimensions, so neither dataset is a subset of the other. Both contain aggregate statistics, not records of individual tenants or advertised properties.
@@ -92,7 +98,7 @@ The database also distinguishes between the **advertised monthly rent of a house
 
 ## Normalization
 
-The database design was normalized according to **1NF, 2NF, and 3NF** to reduce duplication and prevent insertion, update, and deletion anomalies.
+The CBS observation tables and the corrected core tables follow **1NF, 2NF, and 3NF** principles. The Week 5 review also identified one remaining dependency in the original design: `Application.tenant_id` is determined by `eligibility_id` because each eligibility profile belongs to one tenant. This is documented in the [normalization report](Week5_Answer_4-5.md) and should be resolved by removing the duplicate tenant column or enforcing that both IDs always match.
 
 During the normalization process, two issues were identified and addressed:
 
