@@ -4,6 +4,10 @@
 
 **Repository:** [MedinaAlv/Databases_Assignment](https://github.com/MedinaAlv/Databases_Assignment)
 
+## Week 4 stakeholder video
+
+[Watch or download the stakeholder video](assets/week4-stakeholder-video.mov).
+
 ## Real-world data sources
 
 The two openly licensed CBS datasets selected for the real-data exercise are available in the [data directory](data/README.md). The housing-cost file contains 156 distinct observations; the expanded financial-position file contains 56 distinct observations. They cover different subjects and dimensions, so neither dataset is a subset of the other. Both contain aggregate statistics, not records of individual tenants or advertised properties.
