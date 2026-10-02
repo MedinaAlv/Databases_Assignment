@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS CBS_Region (
 CREATE TABLE IF NOT EXISTS CBS_Financial_Period (
     report_year SMALLINT PRIMARY KEY,
     is_preliminary BOOLEAN NOT NULL,
-    CONSTRAINT chk_cbs_financial_year CHECK (report_year BETWEEN 2011 AND 2100)
+    CONSTRAINT chk_cbs_financial_year CHECK (report_year BETWEEN 2011 AND 2100),
+    CONSTRAINT chk_cbs_preliminary CHECK (is_preliminary IN (0, 1))
 );
 
 CREATE TABLE IF NOT EXISTS CBS_Financial_Observation (

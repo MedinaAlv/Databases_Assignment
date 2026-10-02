@@ -22,6 +22,17 @@ The sources are complementary: one reports housing expenditure by region, tenure
 - Financial population counts and incomes are published in thousands; preserve the units or convert them explicitly. Numeric thousands separators such as `1,010.6` must be removed before parsing. Housing costs are monthly euros and the housing cost ratio is a percentage.
 - Keep region labels such as `Friesland (PV)` as source values or map them through an explicit region table. Do not silently merge province and national rows or equate an aggregate housing cost with a property's advertised rent.
 
+### Input quality and schema audit
+
+| Check | Financial CSV | Housing CSV | Import decision |
+| --- | --- | --- | --- |
+| Missing data | `.` in four purchasing-power cells and 28 poverty cells | No missing numeric cells | Store unavailable values as SQL `NULL`; do not substitute zero. |
+| Dates | Annual labels `2011`–`2024*`; the asterisk marks preliminary 2024 values | Annual labels `2012`, `2015`, `2018`, `2021` | Store integer report years; store the preliminary flag once in `CBS_Financial_Period`. There are no day/month dates in either file. |
+| Duplicate records | Zero duplicate rows or `(age group, sex, year)` keys among 56 observations | Zero duplicate rows or `(region, tenure, dwelling characteristic, accuracy, year)` keys among 156 observations | Reject duplicate keys before import and enforce primary keys in MySQL. |
+| Naming conventions | Age and sex categories use CBS English labels | `The Netherlands` is a country label; provinces use mixed Dutch/English names and a `(PV)` suffix, including `Friesland (PV)` | Preserve exact CBS labels in `CBS_Region` and classify country versus province. Do not silently equate them with the project's `City` or `Municipality` names. |
+
+The original operational schema could not store these aggregate rows without inventing tenants or houses, so the four CBS tables were added. The imported rows satisfy their primary keys, foreign keys, year bounds, and percentage and nonnegative-value checks. A separate audit of existing local `Tenant`, `Landlord`, `City`, `House`, and `Eligibility_Profile` rows found **zero orphan references** and **zero invalid rent, room, income, dependent, or affordability values**. The original schema was updated from inline `REFERENCES` to enforceable table-level foreign keys; positive rent/room and nonnegative profile checks were added. The local `Application` and `Contract` tables were created with their declared foreign keys. This constraint repair does not resolve the separate 3NF issue of `Application.tenant_id` discussed in the week 5 normalization report.
+
 ## MySQL integration
 
 Run `./venv/bin/python import_cbs.py --validate-only` to check the files, then `./venv/bin/python import_cbs.py` to create the tables and import them. The script reads the existing `.env` keys `DB_USER`, `DB_PASSWORD`, and `DB_NAME`; `DB_HOST` and `DB_PORT` are optional and default to `localhost` and `3306`. It validates both files before connecting, skips the attribution footer, rejects duplicate observation keys, converts `.` to SQL `NULL`, removes thousands separators, and separates the preliminary marker from the report year. Re-running it updates rows with the same key without creating duplicates.

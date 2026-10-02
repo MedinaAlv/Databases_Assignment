@@ -19,7 +19,7 @@ We also checked our original tables and found two more problems with 3NF:
 | 3NF | Application.tenant_id depends on eligibility_id, because each eligibility profile belongs to one tenant | Remove tenant_id from Application and get the tenant through Eligibility_Profile |
 | 3NF | max_affordable_rent might be calculated from annual_income and number_dependents | Calculate it in a query or a view, or explain that it is a separate assessment |
 
-Two more things we noticed. Contract.monthly_rent is not a repeated value, because it is the rent agreed when the contract was signed and it can be different from House.monthly_rent. Also, MySQL ignores the REFERENCES we wrote next to the columns in the original CREATE TABLE statements, so we should use FOREIGN KEY constraints at the end of the table, like we did in the CBS tables.
+Two more things we noticed. Contract.monthly_rent is not a repeated value, because it is the rent agreed when the contract was signed and it can be different from House.monthly_rent. MySQL ignored the inline REFERENCES in our original CREATE TABLE statements. We replaced them with enforceable table-level FOREIGN KEY constraints and checked the existing rows before applying them. The Application.tenant_id dependency described above remains a separate normalization issue.
 
 The real data is inserted in normalized form. The script first loads the region and period tables and then the two observation tables. It rejects duplicate keys and we can run it again without getting repeated rows. In total it loads 13 regions, 14 financial periods, 56 financial observations and 156 housing observations.
 
