@@ -65,13 +65,11 @@ CREATE TABLE Eligibility_Profile (
 
 CREATE TABLE Application (
     application_id INT PRIMARY KEY,
-    tenant_id INT NOT NULL,
     eligibility_id INT NOT NULL,
     house_id INT NOT NULL,
     application_date DATE NOT NULL DEFAULT (CURRENT_DATE),
     application_status VARCHAR(50),
     decision_date DATE,
-    CONSTRAINT fk_application_tenant FOREIGN KEY (tenant_id) REFERENCES Tenant(person_id),
     CONSTRAINT fk_application_profile FOREIGN KEY (eligibility_id) REFERENCES Eligibility_Profile(eligibility_id),
     CONSTRAINT fk_application_house FOREIGN KEY (house_id) REFERENCES House(house_id)
 );

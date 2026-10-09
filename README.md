@@ -10,19 +10,20 @@
 
 ## Project documentation
 
-- [Week 2: data model and normalization report](Week_2_Report.md)
-- [Week 2: ERD diagram](assets/ERD_Diagram.pdf)
-- [Week 3: schema, constraints, and example queries](database.ipynb)
-- [Week 5: real-data normalization and limitations](Week5_Answer_4-5.md)
-- [Group SELECT queries and explanations](select_queries.md)
+- [Week 2: data model and normalization report](docs/Week_2_Report.md)
+- [Current database ERD](docs/Final_ERD.md)
+- [Week 2: original ERD diagram](docs/ERD_Diagram.pdf)
+- [Week 3: schema, constraints, and example queries](notebooks/database.ipynb)
+- [Week 5: real-data normalization and limitations](docs/Week5_Answer_4-5.md)
+- [Group SELECT queries and explanations](docs/select_queries.md)
 
 ## Real-world data sources
 
 The two openly licensed CBS datasets selected for the real-data exercise are available in the [data directory](data/README.md). The housing-cost file contains 156 distinct observations; the expanded financial-position file contains 56 distinct observations. They cover different subjects and dimensions, so neither dataset is a subset of the other. Both contain aggregate statistics, not records of individual tenants or advertised properties.
 
-To load them into a MySQL database configured in `.env`, run `./venv/bin/python import_cbs.py`. Use `./venv/bin/python import_cbs.py --validate-only` to check the CSVs without changing the database. The import creates separate CBS observation tables defined in [`cbs_observations.sql`](cbs_observations.sql), so the existing tenant and house records are not used for these statistics. See the [data notes](data/README.md) for the source selection, cleaning rules, and verification results.
+To load them into a MySQL database configured in `.env`, run `./venv/bin/python scripts/import_cbs.py`. Use `./venv/bin/python scripts/import_cbs.py --validate-only` to check the CSVs without changing the database. The import creates separate CBS observation tables defined in [`cbs_observations.sql`](sql%20/cbs_observations.sql), so the existing tenant and house records are not used for these statistics. See the [data notes](data/README.md) for the source selection, cleaning rules, and verification results.
 
-The week 3 example queries were rerun: they returned 24 tenant–house matches, four city summaries, and 18 tenant–city summaries, all from mock records. The [adapted CBS queries](queries_cbs.sql) returned 12 province housing comparisons, 28 age-and-sex financial observations for 2018–2024, and 16 observations for years shared by both datasets. The CBS data contains aggregate statistics, so it cannot identify affordable houses for individual tenants.
+The week 3 example queries were rerun: they returned 24 tenant–house matches, four city summaries, and 18 tenant–city summaries, all from mock records. The [adapted CBS queries](sql%20/queries_cbs.sql) returned 12 province housing comparisons, 28 age-and-sex financial observations for 2018–2024, and 16 observations for years shared by both datasets. The CBS data contains aggregate statistics, so it cannot identify affordable houses for individual tenants.
 
 ## Societal Problem
 
@@ -77,7 +78,7 @@ The database consists of the following main entities:
 - **Landlord** — stores information about property owners.
 - **House** — stores information about properties, including rent, location, size, type, and availability.
 - **Contract** — records rental agreements between tenants and landlords.
-- **Government** — represents the relevant government authority.
+- **Municipality** — represents the relevant local authority.
 - **City** — stores information about the location of properties.
 - **Application** — records applications made by tenants for houses.
 - **Eligibility Profile** — contains information used to assess whether housing is affordable or suitable for a tenant.
@@ -100,7 +101,7 @@ The database also distinguishes between the **advertised monthly rent of a house
 
 ## Normalization
 
-The CBS observation tables and the corrected core tables follow **1NF, 2NF, and 3NF** principles. The Week 5 review also identified one remaining dependency in the original design: `Application.tenant_id` is determined by `eligibility_id` because each eligibility profile belongs to one tenant. This is documented in the [normalization report](Week5_Answer_4-5.md) and should be resolved by removing the duplicate tenant column or enforcing that both IDs always match.
+The CBS observation tables and the current core schema follow **1NF, 2NF, and 3NF** principles. We removed the duplicate `Application.tenant_id`; the tenant is obtained through the application's eligibility profile. The [normalization report](docs/Week5_Answer_4-5.md) documents this change. `max_affordable_rent` is stored as a separate assessment, not calculated solely from income and dependents.
 
 During the normalization process, two issues were identified and addressed:
 
@@ -128,20 +129,45 @@ The overall goal of our database is to provide a structured way to investigate *
 By connecting information about tenants, their financial circumstances, landlords, houses, applications, rental contracts, and locations, the database provides a foundation for analysing the housing affordability challenges faced by young people in Spain and, more broadly, across Europe.
 
 
-## TODO to use database properly
+## Running the database locally
 
-## Set up the Kernel 
-Only do this the first time you oull from github, so your code works
-Run the following command in terminal: 
-    python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt
-Then go to database.ipynb -> Select Kernel -> Python Environments -> venv
+Run these commands from the repository root with MySQL running. You need a MySQL user that can create a database and tables. The directory name `sql ` includes a trailing space, so keep the quotes around SQL file paths.
 
-## To log into SQL 
-Create a file called ".env" 
-Copy the following into the file: 
-DB_USER=[Your username for SQL]
-DB_PASSWORD=[Your Password for SQL]
-DB_NAME=housing_poverty
+1. Set up Python once after cloning:
 
-Subsitute the first two with your info, leave the last 
-The file is git ignored so it won't be pushed to git. Therefore everyone needs to create their own on their computer to use sql
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
+
+2. Create a `.env` file in the repository root with your own MySQL credentials:
+
+   ```text
+   DB_USER=your_mysql_user
+   DB_PASSWORD=your_mysql_password
+   DB_NAME=housing_poverty
+   ```
+
+   `DB_HOST` and `DB_PORT` are optional; they default to `localhost` and `3306`. `.env` is ignored by Git, so each member creates their own.
+
+3. Create an empty database, then load the core schema and mock records:
+
+   ```bash
+   mysql -u your_mysql_user -p -e "CREATE DATABASE housing_poverty;"
+   mysql -u your_mysql_user -p housing_poverty < "sql /housing_poverty.sql"
+   mysql -u your_mysql_user -p housing_poverty < "sql /mock_data.sql"
+   ```
+
+   Enter your MySQL password when prompted. Run the schema and mock data commands only once on an empty database.
+
+4. Validate and import the CBS data:
+
+   ```bash
+   ./venv/bin/python scripts/import_cbs.py --validate-only
+   ./venv/bin/python scripts/import_cbs.py
+   ```
+
+   The import creates the CBS tables and can be rerun without duplicating observations. To confirm the setup, run `mysql -u your_mysql_user -p housing_poverty -e "SHOW TABLES;"`.
+
+The [notebook](notebooks/database.ipynb) is available for exploring the example queries. Select the `venv` kernel when opening it. After following the SQL setup above, skip the notebook cells that create tables or insert the same mock records.

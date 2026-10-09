@@ -1,6 +1,6 @@
 """Validate and import the two selected CBS CSVs into MySQL.
 
-Run: ./venv/bin/python import_cbs.py [--validate-only]
+Run: ./venv/bin/python scripts/import_cbs.py [--validate-only]
 """
 
 import argparse
@@ -13,7 +13,7 @@ import pymysql
 from dotenv import load_dotenv
 
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent
 FINANCIAL_CSV = ROOT / "data/financial_position_age_sex_cbs_86135ENG.csv"
 HOUSING_CSV = ROOT / "data/housing_costs_households_cbs_84488ENG.csv"
 
@@ -106,7 +106,7 @@ def import_rows(periods, financial, regions, housing):
     )
     try:
         with connection.cursor() as cursor:
-            for statement in (ROOT / "cbs_observations.sql").read_text().split(";"):
+            for statement in (ROOT / "sql /cbs_observations.sql").read_text().split(";"):
                 statement = statement.strip()
                 if statement:
                     cursor.execute(statement)

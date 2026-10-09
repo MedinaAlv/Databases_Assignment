@@ -1,5 +1,7 @@
 # Week 2 - Data Modeling
 
+Tasks 1–6 below record the initial model. The [current ERD](Final_ERD.md) and SQL schema show the finalized tables after normalization.
+
 ## Task 1 - Scope of the Problem - What should the database be able to answer?
 
 - Find affordable houses for adults aged 18–30 to help prevent poverty.
@@ -115,7 +117,7 @@ Normalization was applied as a systematic pass over the ERD against the rules of
 
 **1NF** requires every attribute to hold a single, atomic value. The Landlord table stored a single "address" column combining street, house number, city, and postal code into one text value (e.g. "14 Privet Drive, Little Whinging, 6321AB"). This does not store a single atomic value and is redundant, since the landlord can be reached through phone or email, we removed this attribute.
 
-**2NF** applies to composite keys. Eligibility_Profile (eligibility_id, tenant_id) is the only composite-key table: its attributes (employment_status, annual_income, etc.) all depend on both columns together, not on either one alone, so no partial dependency exists and no change was required.
+**2NF** rules out dependencies on only part of a composite primary key. The core tables use single-column primary keys, including `Eligibility_Profile.eligibility_id`, so they have no partial primary-key dependencies.
 
 **3NF** forbids a non-key attribute depending transitively on another non-key attribute. Contract stored government_id, but this is a fact about the house, not the contract. house_id -> city_id (House) -> government_id (City) already determines it, so it was transitively dependent on the Contract's key. Repeating it on every contract row risked inconsistency if a house's municipality changed, so we removed it from Contract and it can now be retrieved through a join through House -> City -> Municipality.
 
@@ -173,10 +175,10 @@ The original CBS files were not normalized. These are the problems we found and 
 
 We also checked our original tables and found two more problems with 3NF:
 
-| Normal form | Problem | Possible solution |
+| Normal form | Problem | Resolution |
 | --- | --- | --- |
-| 3NF | Application.tenant_id depends on eligibility_id, because each eligibility profile belongs to one tenant | Remove tenant_id from Application and get the tenant through Eligibility_Profile |
-| 3NF | max_affordable_rent might be calculated from annual_income and number_dependents | Calculate it in a query or a view, or explain that it is a separate assessment |
+| 3NF | Application.tenant_id depended on eligibility_id, because each eligibility profile belongs to one tenant | Removed tenant_id from Application; retrieve the tenant through Eligibility_Profile |
+| 3NF | max_affordable_rent might be calculated from annual_income and number_dependents | It is a separate assessed rent ceiling, so it is stored independently |
 
 Two more things we noticed. Contract.monthly_rent is not a repeated value, because it is the rent agreed when the contract was signed and it can be different from House.monthly_rent. Also, MySQL ignores the REFERENCES we wrote next to the columns in the original CREATE TABLE statements, so we should use FOREIGN KEY constraints at the end of the table, like we did in the CBS tables.
 
