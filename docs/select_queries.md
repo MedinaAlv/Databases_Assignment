@@ -1,6 +1,6 @@
 # Group SELECT queries
 
-## Federico Leongito (`FedericoLeongito`)
+## Federico Leongito
 
 ### Query 1: Change in tenant housing costs by province
 
