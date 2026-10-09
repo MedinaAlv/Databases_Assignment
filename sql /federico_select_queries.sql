@@ -1,4 +1,4 @@
--- Two additional SELECT queries by Federico Leongito (GitHub: FedericoLeongito).
+-- Two additional SELECT queries by Federico Leongito.
 -- Questions and societal relevance are documented in select_queries.md.
 -- Requires the CBS tables defined in cbs_observations.sql and loaded by import_cbs.py.
 
