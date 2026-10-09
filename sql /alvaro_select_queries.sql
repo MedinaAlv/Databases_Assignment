@@ -1,4 +1,4 @@
---Query 1: available houses that fit each young tenant's maximum affordable rent
+-- Query 1: available houses that fit each young tenant's maximum affordable rent
 SELECT
     p.first_name,
     p.last_name,
@@ -30,7 +30,7 @@ WHERE TIMESTAMPDIFF(YEAR, t.date_of_birth, CURDATE()) BETWEEN 18 AND 30
 ORDER BY p.last_name, p.first_name, h.monthly_rent;
 
 
---Query 2: rent burden of tenants with an active contract (contract rent vs. income)
+-- Query 2: rent burden of tenants with an active contract (contract rent vs. income)
 SELECT
     p.first_name,
     p.last_name,
