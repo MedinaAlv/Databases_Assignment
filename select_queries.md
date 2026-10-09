@@ -113,3 +113,72 @@ WHERE f.age_group = 'Age: 15 to 24 years'
   AND h.accuracy = 'Value'
 ORDER BY f.report_year, f.sex;
 ```
+
+
+## Álvaro Medina (`alvaro_select_queries`)
+
+### Query 1: Affordable available houses for young tenants
+
+**Question:** Which available houses have a monthly rent at or below the maximum affordable rent of each young tenant aged 18–30, based on their most recent eligibility profile?
+
+**Relevance:** This query directly addresses our societal problem of housing costs and the risk of poverty among young people. It compares tenants' financial circumstances with the rent of available properties. The rent margin shows how much a property's rent is below the tenant's maximum affordable rent. This can help identify which tenants have affordable housing options in our database.
+
+**Data limitation:** The query uses fictional tenant and housing records. It demonstrates how affordability could be analysed but does not identify real available rental properties.
+
+### Query 2: Rent burden of tenants with active contracts
+
+**Question:** How does the monthly rent paid by tenants with active rental contracts compare with the advertised rent of their properties, and what percentage of their annual income goes towards rent?
+
+**Relevance:** Housing costs can place pressure on a tenant's financial situation and increase the risk of poverty. This query calculates the percentage of annual income spent on rent and classifies tenants as cost burdened when their annual contract rent exceeds 30% of their annual income. It also compares the contractual rent with the advertised rent, which can reveal differences between the two amounts.
+
+**Data limitation:** The query uses fictional tenants, contracts, and housing records. It currently includes tenants of all ages rather than specifically restricting the results to people aged 18–30. Its findings therefore describe the tenants with active contracts in our mock database, not necessarily young people in the Netherlands.
+
+
+## Lilly Schulze (`lilly_select_queries`)
+
+### Query 1: Rental property ownership and availability by landlord
+
+**Question:** Which landlords own the most properties in our database, and how many of their properties are currently available to rent?
+
+**Relevance:** The number of properties owned by each landlord and the availability of those properties can help us understand how rental housing is distributed in our database. Comparing the number of available properties can also provide insight into the supply of housing represented in the dataset. This is relevant to our societal problem because limited housing availability can make it harder for young people to find suitable accommodation.
+
+**Data limitation:** The query uses fictional landlord and housing records. It describes the distribution of properties in our database and should not be interpreted as evidence about actual landlords or housing supply in the Netherlands.
+
+```sql
+SELECT
+    landlord.person_id AS landlord_id,
+    COUNT(h.house_id) AS total_properties,
+    COUNT(
+        CASE
+            WHEN h.availability_status = 'available'
+            THEN h.house_id
+        END
+    ) AS available_properties
+FROM landlord
+LEFT JOIN house h
+    ON landlord.person_id = h.landlord_id
+GROUP BY landlord.person_id
+ORDER BY total_properties DESC;
+```
+
+### Query 2: Average rental prices of available properties by city
+
+**Question:** How does the average monthly rent of currently available properties differ between cities in our database, and which cities have the highest average rents?
+
+**Relevance:** Rental prices can vary between locations, making housing more difficult to afford in some cities than in others. By comparing the average rents of currently available properties, this query helps us explore where young people might face higher rental costs when searching for housing. Counting the available properties in each city also provides context for interpreting the averages, since cities with few available properties may have less representative averages.
+
+**Data limitation:** The query uses fictional property records and does not represent actual rental prices or housing availability in Dutch cities. It includes only properties marked as currently available in our database, so the results describe the rental options represented in our mock dataset rather than the entire housing market.
+
+```sql
+SELECT
+    c.city_id,
+    c.city_name,
+    COUNT(h.house_id) AS available_property_count,
+    AVG(h.monthly_rent) AS average_monthly_rent
+FROM city c
+LEFT JOIN house h
+    ON c.city_id = h.city_id
+    AND h.availability_status = 'available'
+GROUP BY c.city_id, c.city_name
+ORDER BY average_monthly_rent DESC;
+```
