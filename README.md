@@ -14,6 +14,7 @@
 - [Week 2: ERD diagram](assets/ERD_Diagram.pdf)
 - [Week 3: schema, constraints, and example queries](database.ipynb)
 - [Week 5: real-data normalization and limitations](Week5_Answer_4-5.md)
+- [Group SELECT queries and explanations](select_queries.md)
 
 ## Real-world data sources
 
